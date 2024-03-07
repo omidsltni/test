@@ -11,6 +11,6 @@ jobs:
       - name: Build
         run: docker build -t commit-m/rentazon:latest .
       - name: Login
-        run: echo  ${{ secrets.ARTIFACTORY_PASSWORD }} | docker login -u ${{ secrets.ARTIFACTORY_USERNAME }} --password-stdin artifactory.glss.ir
+        run: echo  ${{ secrets.ARTIFACTORY_PASSWORD }} | docker login -u ${{ secrets.ARTIFACTORY_USERNAME }} --password-stdin https://artifactory.glss.ir/artifactory/docker/
       - name: Push
         run: docker push artifactory.glss.ir/commitm/rentazon:latest
