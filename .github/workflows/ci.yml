@@ -12,5 +12,14 @@ jobs:
         run: docker build -t docker.artifactory.glss.ir/commit-m/rentazon:latest . && docker images
       - name: Login
         run: echo  ${{ secrets.ARTIFACTORY_PASSWORD }} | docker login -u ${{ secrets.ARTIFACTORY_USERNAME }} --password-stdin https://docker.artifactory.glss.ir/artifactory/docker/
+      - name: Wait for approval
+        id: approval
+        uses: repo-sync/pull-request@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          permission-to-fork: read
+          actions: "opened"
+          review: "/approve"
+          work-path: .
       - name: Push
         run: docker push docker.artifactory.glss.ir/commit-m/rentazon:latest
