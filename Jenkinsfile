@@ -5,9 +5,7 @@ node {
     def registry = 'docker.artifactory.glss.ir'
     def backReg = "docker.artifactory.glss.ir/${projectNamespace}/back"
     def frontReg = "docker.artifactory.glss.ir/${projectNamespace}/front"
-    def backDockerContext = './back-mono'
     def backDockerPath = './back-mono/build/Dockerfile'
-    def frontDockerContext = './new-front'
     def frontDockerPath = './new-front/Dockerfile'
     
     stage('Clone repository')
@@ -19,29 +17,20 @@ node {
     }
     stage('Build Back image')
         {
-          sh "docker build ${backReg}:${commitHash} -f ${backDockerPath} ${backDockerContext}"
+          sh "docker build ${backReg}:${commitHash} -f ${backDockerPath}"
         }
 
     stage('Push Back image')
       {
-        docker.withRegistry( registry, 'registry' )
-          {
-            dockerImage.push()
-            dockerImage.push(commitHash)
-          }
+        sh "docker push ${backReg}:${commitHash}"
       }
     
     stage('Build Front image')
       {
-        dockerImage = docker.build(frontReg + "${commitHash}:latest", "-f ${frontDockerPath} ${frontDockerContext}")
+        sh "docker build ${frontReg}:${commitHash} -f ${frontDockerPath}"
       }
     stage('Push Front image')
       {
-       docker.withRegistry( registry, 'registry' )
-        {
-          dockerImage.push()
-          dockerImage.push(commitHash)
-        }
+        sh "docker push ${frontReg}:${commitHash}"
       }
-    
 }
