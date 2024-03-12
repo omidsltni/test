@@ -15,7 +15,7 @@ node {
           commitHash = checkout(scm).GIT_COMMIT
         }
     stage('Docker Login'){
-      sh "echo 'Pass=omid1381 | docker login -u soltani --password-stdin docker.artifactory.glss.ir"
+      sh "echo 'Pass=omid1381' | docker login -u soltani --password-stdin docker.artifactory.glss.ir"
     }
     stage('Build Back image')
         {
