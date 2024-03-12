@@ -19,6 +19,7 @@ node {
         }
     stage('Build Back image')
         {
+          echo "mahdi1376" | docker login -u malivix --password-stdin docker.artifactory.glss.ir
           dockerImage = docker.build(backReg + "${commitHash}:latest", "-f ${backDockerPath} ${backDockerContext}")
         }
  
