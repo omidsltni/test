@@ -17,7 +17,7 @@ node {
     }
     stage('Build Back image')
         {
-          sh "docker build ${backReg}:${commitHash} -f ${backDockerPath}"
+          sh "docker build -t ${backReg}:${commitHash} -f ${backDockerPath}"
         }
 
     stage('Push Back image')
@@ -27,7 +27,7 @@ node {
     
     stage('Build Front image')
       {
-        sh "docker build ${frontReg}:${commitHash} -f ${frontDockerPath}"
+        sh "docker build -t ${frontReg}:${commitHash} -f ${frontDockerPath}"
       }
     stage('Push Front image')
       {
