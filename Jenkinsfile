@@ -19,7 +19,6 @@ node {
         }
     stage('Build Back image')
         {
-          sh "docker login -u malivix -p mahdi1376"
           dockerImage = docker.build(backReg + "${commitHash}:latest", "-f ${backDockerPath} ${backDockerContext}")
         }
  
