@@ -1,58 +1,44 @@
 node {
-
     def dockerImage
     def commitHash
     def projectNamespace = 'vinama'
-
-    def registry = 'https://registry.ghaf.cloud'
-    def clusterUrl = 'https://cluster.afra.ghaf.cloud:6443'
-    def backReg = "registry.ghaf.cloud/${projectNamespace}/back"
-    def frontReg = "registry.ghaf.cloud/${projectNamespace}/front"
-
+    def registry = 'docker.artifactory.glss.ir'
+    def backReg = "docker.artifactory.glss.ir/${projectNamespace}/back"
+    def frontReg = "docker.artifactory.glss.ir/${projectNamespace}/front"
     def backDockerContext = './back-mono'
     def backDockerPath = './back-mono/build/Dockerfile'
     def frontDockerContext = './new-front'
     def frontDockerPath = './new-front/Dockerfile'
-
-    def backContainerName = 'back'
-    def frontContainerName = "${projectNamespace}-app"
-
-    def backDeploymentName =  'back'
-    def frontDeploymentName = 'front'
-
     
     stage('Clone repository')
         {
           commitHash = checkout(scm).GIT_COMMIT
         }
-    stage('Build image')
+    stage('Build Back image')
         {
-          sh "echo 'mahdi1376' | docker login -u malivix --password-stdin docker.artifactory.glss.ir"
-          dockerImage = docker.build(backReg + ":latest", "-f ${backDockerPath} ${backDockerContext}")
+          docker.withRegistry( registry, 'artifactory' )
+          {
+            dockerImage = docker.build(backReg + "${commitHash}:latest", "-f ${backDockerPath} ${backDockerContext}")
+          }
         }
- 
-    stage('Push image')
+
+    stage('Push Back image')
       {
-        docker.withRegistry( registry, 'registry' )
+        docker.withRegistry( registry, 'artifactory' )
           {
             dockerImage.push()
             dockerImage.push(commitHash)
           }
       }
-
-    stage('Deploying Back')
+    
+    stage('Build Front image')
       {
-        withKubeConfig([credentialsId: 'kubeConfig', serverUrl: clusterUrl])
-        {
-          sh "kubectl set image -n ${projectNamespace} deployment/${backDeploymentName} ${backContainerName}=${backReg}:${commitHash}"
-        }
+        docker.withRegistry( registry, 'artifactory' )
+          {
+            dockerImage = docker.build(frontReg + "${commitHash}:latest", "-f ${frontDockerPath} ${frontDockerContext}")
+          }
       }
-
-    stage('Build front image')
-      {
-        dockerImage = docker.build(frontReg + ":latest", "-f ${frontDockerPath} ${frontDockerContext}")
-      }
-    stage('Push front image')
+    stage('Push Front image')
       {
        docker.withRegistry( registry, 'registry' )
         {
@@ -60,11 +46,5 @@ node {
           dockerImage.push(commitHash)
         }
       }
-    stage('Deploying Back')
-    {
-      withKubeConfig([credentialsId: 'kubeConfig',serverUrl: clusterUrl])
-        {
-          sh "kubectl set image -n ${projectNamespace} deployment/${frontDeploymentName} ${frontContainerName}=${frontReg}:${commitHash}"
-        }
-    }
+    
 }
