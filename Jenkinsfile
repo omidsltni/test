@@ -1,5 +1,4 @@
 pipeline {
-    agent any
     def dockerImage
     def commitHash
     def projectNamespace = 'vinama'
