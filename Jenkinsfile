@@ -14,17 +14,17 @@ node {
         {
           commitHash = checkout(scm).GIT_COMMIT
         }
+    stage('Docker Login'){
+      sh "echo 'Pass=omid1381 | docker login -u soltani --password-stdin docker.artifactory.glss.ir"
+    }
     stage('Build Back image')
         {
-          docker.withRegistry( registry, 'artifactory' )
-          {
-            dockerImage = docker.build(backReg + "${commitHash}:latest", "-f ${backDockerPath} ${backDockerContext}")
-          }
+          sh "docker build ${backReg}:${commitHash} -f ${backDockerPath} ${backDockerContext}"
         }
 
     stage('Push Back image')
       {
-        docker.withRegistry( registry, 'artifactory' )
+        docker.withRegistry( registry, 'registry' )
           {
             dockerImage.push()
             dockerImage.push(commitHash)
@@ -33,10 +33,7 @@ node {
     
     stage('Build Front image')
       {
-        docker.withRegistry( registry, 'artifactory' )
-          {
-            dockerImage = docker.build(frontReg + "${commitHash}:latest", "-f ${frontDockerPath} ${frontDockerContext}")
-          }
+        dockerImage = docker.build(frontReg + "${commitHash}:latest", "-f ${frontDockerPath} ${frontDockerContext}")
       }
     stage('Push Front image')
       {
