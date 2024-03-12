@@ -1,4 +1,5 @@
-pipeline {
+node {
+
     def dockerImage
     def commitHash
     def projectNamespace = 'vinama'
@@ -11,6 +12,7 @@ pipeline {
     def backDockerPath = './back-mono/build/Dockerfile'
     def frontDockerContext = './new-front'
     def frontDockerPath = './new-front/Dockerfile'
+    
     stage('Clone repository')
         {
           commitHash = checkout(scm).GIT_COMMIT
