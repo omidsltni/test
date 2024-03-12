@@ -17,7 +17,7 @@ node {
     }
     stage('Build Back image')
         {
-          sh "docker build -t ${backReg}:${commitHash} -f ${backDockerPath}"
+          sh "docker build -t app:${commitHash} -f ${backDockerPath}"
         }
 
     stage('Push Back image')
