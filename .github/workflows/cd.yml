@@ -6,14 +6,15 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Login
-        run: echo  ${{ secrets.ARTIFACTORY_PASSWORD }} | docker login -u ${{ secrets.ARTIFACTORY_USERNAME }} --password-stdin https://docker.artifactory.glss.ir/artifactory/docker/
-      - name: GooleCloud SDK
-        uses: google-github-actions?setup-gcloud@master
+      - uses: google-github-actions/auth@v2
         with:
-          version: latest
-          project_id: ${{ secrets.GCP_PR_ID }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-      - name: Deploy
-        run: |
-          gcloud run deploy ---servicename--- --image commit-m/rentazon:latest --platform managed --region ---region---
+          credentials: ${{ secrets.GCP_SA_KEY }}
+      - name: Docker Login
+        run: echo  ${{ secrets.ARTIFACTORY_PASSWORD }} | docker login -u ${{ secrets.ARTIFACTORY_USERNAME }} --password-stdin https://docker.artifactory.glss.ir/artifactory/docker/
+      - uses: google-github-actions/deploy@v2
+        with:
+          project_id: ${{ GCP_PR_ID }}
+          location: your-region
+          delivery_method: PUSH
+          image_name: https://docker.artifactory.glss.ir/artifactory/docker/commit-m/rentazon:${{ github.sha }}
+          # Additional configuration options for Cloud Run deployment
