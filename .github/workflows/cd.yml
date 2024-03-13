@@ -14,10 +14,3 @@ jobs:
         uses: 'google-github-actions/setup-gcloud@v2'
       - name: Docker Login
         run: echo  ${{ secrets.ARTIFACTORY_PASSWORD }} | docker login -u ${{ secrets.ARTIFACTORY_USERNAME }} --password-stdin https://docker.artifactory.glss.ir/artifactory/docker/
-      - uses: google-github-actions/deploy@v2
-        with:
-          project_id: ${{ secrets.GCP_PR_ID }}
-          location: your-region
-          delivery_method: PUSH
-          image_name: https://docker.artifactory.glss.ir/artifactory/docker/commit-m/rentazon:${{ github.sha }}
-          # Additional configuration options for Cloud Run deployment
