@@ -13,7 +13,7 @@ jobs:
         run: echo  ${{ secrets.ARTIFACTORY_PASSWORD }} | docker login -u ${{ secrets.ARTIFACTORY_USERNAME }} --password-stdin https://docker.artifactory.glss.ir/artifactory/docker/
       - uses: google-github-actions/deploy@v2
         with:
-          project_id: ${{ GCP_PR_ID }}
+          project_id: ${{ secrets.GCP_PR_ID }}
           location: your-region
           delivery_method: PUSH
           image_name: https://docker.artifactory.glss.ir/artifactory/docker/commit-m/rentazon:${{ github.sha }}
