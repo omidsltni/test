@@ -16,8 +16,8 @@ node {
         }
     stage('Docker Login'){
       withCredentials([usernamePassword(credentialsId: 'artifactory', usernameVariable: 'U', passwordVariable: 'P')]) {
-}
-      sh "echo $P | docker login -u $U --password-stdin docker.artifactory.glss.ir"
+        sh "echo $P | docker login -u $U --password-stdin docker.artifactory.glss.ir"
+      }
     }
     stage('Build Back image')
         {
