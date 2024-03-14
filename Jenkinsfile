@@ -12,32 +12,17 @@ node {
     stage('Clone repository')
         {
           commitHash = checkout(scm).GIT_COMMIT
-        }
+    }
     stage('Docker Login'){
-      withCredentials([usernamePassword(credentialsId: 'artifactory', usernameVariable: 'U', passwordVariable: 'P')]) {
-        sh "echo $P | docker login -u $U --password-stdin docker.artifactory.glss.ir"
+        withCredentials([usernamePassword(credentialsId: 'artifactory', usernameVariable: 'U', passwordVariable: 'P')]) {
+            sh "echo $P | docker login -u $U --password-stdin docker.artifactory.glss.ir"
         }
     }
-    stage('Build Back image')
-        {
-          dir('back-mono/build/'){
-            sh "docker build -t ${backReg}:${commitHash} ."
-          }
-        }
+    stage('Build Back image'){
+        sh "docker build -t ${backReg}:${commitHash} ."
+    }
 
-    stage('Push Back image')
-      {
+    stage('Push Back image'){
         sh "docker push ${backReg}:${commitHash}"
-      }
-    
-    stage('Build Front image')
-      {
-        dir('new-front/'){
-          sh "docker build -t ${frontReg}:${commitHash} ."
-        }
-      }
-    stage('Push Front image')
-      {
-        sh "docker push ${backReg}:${commitHash}"
-      }
+    }
 }
