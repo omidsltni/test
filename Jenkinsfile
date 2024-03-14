@@ -6,7 +6,6 @@ node {
     def backReg = "docker.artifactory.glss.ir/${projectNamespace}/back"
     def frontReg = "docker.artifactory.glss.ir/${projectNamespace}/front"
     def backDockerContext = './back-mono'
-    def backDockerPath = './back-mono/build/Dockerfile'
     def frontDockerContext = './new-front'
     def frontDockerPath = './new-front/Dockerfile'
     
@@ -17,11 +16,11 @@ node {
     stage('Docker Login'){
       withCredentials([usernamePassword(credentialsId: 'artifactory', usernameVariable: 'U', passwordVariable: 'P')]) {
         sh "echo $P | docker login -u $U --password-stdin docker.artifactory.glss.ir"
-      }
+        }
     }
     stage('Build Back image')
         {
-          dir(${backDockerPath}){
+          dir('back-mono/build/Dockerfile'){
             sh "docker build ${backReg}:${commitHash} ."
           }
         }
@@ -33,8 +32,8 @@ node {
     
     stage('Build Front image')
       {
-        dir(${frontDockerPath}){
-          sh "docker build ${frontReg}:${commitHash} -f ${backDockerPath}"
+        dir('new-front/Dockerfile'){
+          sh "docker build ${frontReg}:${commitHash} ."
         }
       }
     stage('Push Front image')
