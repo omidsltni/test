@@ -20,8 +20,8 @@ node {
     }
     stage('Build Back image')
         {
-          dir('back-mono/build/Dockerfile'){
-            sh "docker build ${backReg}:${commitHash} ."
+          dir('back-mono/build/'){
+            sh "docker build -t ${backReg}:${commitHash} ."
           }
         }
 
@@ -32,8 +32,8 @@ node {
     
     stage('Build Front image')
       {
-        dir('new-front/Dockerfile'){
-          sh "docker build ${frontReg}:${commitHash} ."
+        dir('new-front/'){
+          sh "docker build -t ${frontReg}:${commitHash} ."
         }
       }
     stage('Push Front image')
